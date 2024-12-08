@@ -8,7 +8,7 @@ df = pl.read_parquet("/home/xf4/projects/duckdb-dbt-challenge/data/raw/yellow_tr
 #    print(f"Column: {col}: {count}")
 
 print(df.columns)
-print(df.select('payment_type').unique())
+print(df.select('PULocationID').unique())
 
 #lzdf=pl.scan_parquet("/home/xf4/projects/duckdb-dbt-challenge/data/raw/yellow_tripdata_2024-01.parquet")
 #row_num = lzdf.select(pl.len()).collect().item()
