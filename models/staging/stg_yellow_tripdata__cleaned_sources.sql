@@ -9,17 +9,15 @@ filtered as (
 
     select   *
     from    raw_data
-    where   trip_distance > 0.0  
-    and     total_amount > 0.0    
-    and     tip_amount >= 0.0     
-    and     tolls_amount >= 0.0   
-    and     Airport_fee >= 0.0
-    and     congestion_surcharge >= 0.0
-    and     passenger_count > 0.0
-    and     fare_amount >= 0 
-    and     RatecodeID >= 1 and RatecodeID <= 6     
-    and     store_and_fwd_flag in ('Y', 'N')
-    and     tpep_pickup_datetime < tpep_dropoff_datetime
+    where   
+                trip_distance > 0.0
+        and     fare_amount >= 0  
+        and     total_amount > 0.0
+        and     passenger_count > 0.0
+        and     tpep_pickup_datetime < tpep_dropoff_datetime     
+        and     tip_amount >= 0.0     
+        and     tolls_amount >= 0.0   
+        and     Airport_fee >= 0.0      
 ),
 
 renamed as (

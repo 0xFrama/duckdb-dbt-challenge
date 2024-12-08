@@ -3,20 +3,17 @@ version: 2
 models:
   - name: stg_yellow_tripdata__cleaned_sources
     columns:
+      - name: VendorID
+        tests:
+          - not_null
+      - name: pickup_timestamp
+        tests:
+          - not_null
+      - name: dropoff_timestamp
+        tests:
+          - not_null
       - name: trip_duration_min
         tests:
           - not_null
           - dbt_utils.expression_is_true:
               expression: "> 0"
-      - name: VendorID
-        tests:
-          - unique
-          - not_null
-      - name: RatecodeID
-        tests:
-          - accepted_values:
-              values: [ 1, 2, 3, 4, 5, 6]
-      - name: store_and_fwd_flag
-        tests:
-          - accepted_values:
-              values: ['Y', 'N']
