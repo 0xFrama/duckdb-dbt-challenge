@@ -5,25 +5,29 @@ with raw_data as (
 
 ),
 
-cleaned_data as (
+filtered as (
 
     select   *
     from    raw_data
-    where   trip_distance >= 0.0  
+    where   trip_distance > 0.0  
     and     total_amount > 0.0    
     and     tip_amount >= 0.0     
     and     tolls_amount >= 0.0   
+    and     Airport_fee >= 0.0
+    and     congestion_surcharge >= 0.0
     and     passenger_count > 0.0
-    and     fare_amount >= 0      
+    and     fare_amount >= 0 
+    and     RatecodeID >= 1 and RatecodeID <= 6     
+    and     store_and_fwd_flag in ('Y', 'N')
     and     tpep_pickup_datetime < tpep_dropoff_datetime
 ),
 
-formatted_data as (
+renamed as (
 
-    select  VendorID,
-            cast(tpep_pickup_datetime as TIMESTAMP) as pickup_time,
-            cast(tpep_dropoff_datetime as TIMESTAMP) as droppoff_time,
-            extract(minute from (droppoff_time - pickup_time)) as trip_duration,
+    select  cast(VendorID as int) as VendorID,
+            cast(tpep_pickup_datetime as TIMESTAMP) as pickup_timestamp,
+            cast(tpep_dropoff_datetime as TIMESTAMP) as droppoff_timestamp,
+            extract(minute from (droppoff_timestamp - pickup_timestamp))::int as trip_duration_min,
             passenger_count,
             trip_distance,
             RatecodeID,
@@ -40,14 +44,14 @@ formatted_data as (
             total_amount,
             congestion_surcharge,
             Airport_fee
-    from    cleaned_data
+    from    filtered
 ),
 
-enriched_data as (
+enriched as (
 
     select  *,
             case 
-                when payment_type = 2.0 then TRUE 
+                when payment_type = 2 then TRUE 
                 else FALSE 
             end as is_prepaid,
             case
@@ -55,8 +59,8 @@ enriched_data as (
                 when trip_distance between 1.0 and 5.0 then 'medium'
                 else 'long'
             end as trip_distance_category
-    from formatted_data
+    from renamed
 
 )
 
-select * from enriched_data
+select * from enriched
