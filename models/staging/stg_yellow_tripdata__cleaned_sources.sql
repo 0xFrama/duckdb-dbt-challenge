@@ -17,7 +17,12 @@ filtered as (
         and     tpep_pickup_datetime < tpep_dropoff_datetime     
         and     tip_amount >= 0.0     
         and     tolls_amount >= 0.0   
-        and     Airport_fee >= 0.0      
+        and     Airport_fee >= 0.0
+        and     store_and_fwd_flag in ('Y', 'N')      
+        and     congestion_surcharge >= 0.0
+        and     improvement_surcharge >= 0.0
+        and     extra >= 0.0
+        and     mta_tax >= 0.0
 ),
 
 renamed as (
@@ -53,8 +58,8 @@ enriched as (
                 else FALSE 
             end as is_prepaid,
             case
-                when trip_distance < 1.0 then 'short'
-                when trip_distance between 1.0 and 5.0 then 'medium'
+                when trip_distance <= 2.0 then 'short'
+                when trip_distance between 2.0 and 5.0 then 'medium'
                 else 'long'
             end as trip_distance_category
     from renamed

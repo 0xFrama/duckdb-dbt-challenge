@@ -25,13 +25,13 @@ classified_trips as (
 aggregated_data AS (
     SELECT
         pickup_time_slots,
-        COUNT(*) AS total_trips,
-        round(SUM(total_amount)) AS total_revenue
+        count(*) as total_trips,
+        round(sum(total_amount), 2) as total_revenue
     FROM classified_trips
     GROUP BY pickup_time_slots
 )
 
-select  * 
+select  *
 from    aggregated_data
 order by 
     case pickup_time_slots

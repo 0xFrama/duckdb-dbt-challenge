@@ -1,10 +1,10 @@
 models:
-  - name: time_of_day_trips
+  - name: trips_by_time_of_day
     description: >
       Provides insights into the number of trips and total revenue
       for different time slots (Morning, Afternoon, Evening, Night).
     columns:
-      - name: time_of_day
+      - name: pickup_time_slots
         description: >
           Time slot classification based on pickup time:
           - Morning: 5:00–11:59
@@ -14,6 +14,45 @@ models:
       - name: total_trips
         description: >
           The total number of trips taken during each time slot.
-      - name: total_revenue
+      - name: total_revenue ($)
         description: >
           The total revenue (sum of `total_amount`) generated in each time slot.
+
+  - name: top_5_pickup_zones
+    description: >
+      Contains the top 5 pickup zones.
+    columns:
+      - name: PULocationID
+        description: >
+          Pickup zone's ID
+      - name: number_of_trips
+        description: >
+          Total number of trips carried out by taxis.
+      - name: total_revenue
+        description: >
+          The total revenue (sum of `total_amount`) generated for each pickup zone.
+
+  - name: rate_performance
+    description: >
+      Shows the average tip percentange (tip_amount / total_amount ) for each VendorID.
+    columns:
+      - name: VendorID
+        description: >
+          An ID code indicating the taxi vendor
+      - name: avg_tip (%)
+        description: >
+          Average tip percentange for each VendorID
+
+  - name: distance_analysis
+    description: >
+      Illustrates the average trip duration and total revenue for each trip segment (short, medium and long)
+    columns:
+      - name: segment_trips
+        description: >
+          Three segment trips: short (0-2 miles), medium (2-5 miles) and long (> 5 miles).
+      - name: avg_trip_duration (min)
+        description: >
+          Average trip duration in minutes
+      - name: total_revenue
+        description: >
+          The total revenue (sum of `total_amount`) generated for segment.

@@ -2,19 +2,11 @@
 
 with aggregated_data AS (
     SELECT
-        PULocationID,
-        COUNT(*) AS total_trips,
-        round(SUM(total_amount)) AS total_revenue
+            trip_distance_category as segment_trips,
+            round(avg(trip_duration_min), 2) as avg_trip_duration,
+            round(sum(total_amount), 2) as total_revenue
     from {{ ref('stg_yellow_tripdata__cleaned_sources') }}
-    GROUP BY PULocationID 
-),
-
-test as (
-
-    select  *
-    from aggregated_data
-    order by total_trips desc, total_revenue desc
-    limit 5
+    GROUP BY trip_distance_category 
 )
 
-select * from test
+select * from aggregated_data

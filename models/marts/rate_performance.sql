@@ -11,7 +11,7 @@ with tips as (
 rate_perf as (
 
     select  VendorID,
-            round(AVG(tip_percentange), 1) as avg_tip_percentange
+            round(AVG(tip_percentange), 1) as avg_tip
     from tips
     group by VendorID
 
