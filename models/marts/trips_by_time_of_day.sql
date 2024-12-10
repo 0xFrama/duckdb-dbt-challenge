@@ -1,12 +1,14 @@
+{% set fields = ['hour', 'minute', 'second'] %}
 {{ config({"materialized": "table"}) }}
 
 with trips_with_pickup_time as (
     select
         *,
         make_time(
-            extract(hour from pickup_timestamp)::int,
-            extract(minute from pickup_timestamp)::int,
-            extract(second from pickup_timestamp)::int
+            {% for field in fields %}
+            extract({{ field }} from pickup_timestamp)::int
+            {% if not loop.last %}, {% endif %}
+            {% endfor %}
         ) as pickup_time
     from {{ ref('stg_yellow_tripdata__cleaned_sources') }}
 ),
@@ -26,7 +28,7 @@ aggregated_data AS (
     SELECT
         pickup_time_slots,
         count(*) as total_trips,
-        round(sum(total_amount), 2) as total_revenue
+        {{ sum_quantity(total_amount) }} as total_revenue
     FROM classified_trips
     GROUP BY pickup_time_slots
 )
