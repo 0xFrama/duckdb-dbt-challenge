@@ -29,8 +29,8 @@ renamed as (
 
     select  cast(VendorID as int) as VendorID,
             cast(tpep_pickup_datetime as TIMESTAMP) as pickup_timestamp,
-            cast(tpep_dropoff_datetime as TIMESTAMP) as droppoff_timestamp,
-            extract(minute from (droppoff_timestamp - pickup_timestamp))::int as trip_duration_min,
+            cast(tpep_dropoff_datetime as TIMESTAMP) as dropoff_timestamp,
+            round((epoch(tpep_dropoff_datetime)::int - epoch(tpep_pickup_datetime)::int) / 60, 1) as trip_duration_min,
             passenger_count,
             trip_distance,
             RatecodeID,

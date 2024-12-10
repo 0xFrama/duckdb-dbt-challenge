@@ -15,5 +15,6 @@ models:
       - name: trip_duration_min
         tests:
           - not_null
-          - dbt_utils.expression_is_true:
-              expression: "> 0"
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: false
