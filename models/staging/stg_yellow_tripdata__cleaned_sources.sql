@@ -13,8 +13,8 @@ filtered as (
                 trip_distance > 0.0
         and     fare_amount >= 0  
         and     total_amount > 0.0
-        and     passenger_count > 0.0
-        and     tpep_pickup_datetime < tpep_dropoff_datetime     
+        and     passenger_count > 0.0  
+        and     (epoch(tpep_dropoff_datetime)::int - epoch(tpep_pickup_datetime)::int) >= 60
         and     tip_amount >= 0.0     
         and     tolls_amount >= 0.0   
         and     Airport_fee >= 0.0
@@ -30,7 +30,7 @@ renamed as (
     select  cast(VendorID as int) as VendorID,
             cast(tpep_pickup_datetime as TIMESTAMP) as pickup_timestamp,
             cast(tpep_dropoff_datetime as TIMESTAMP) as dropoff_timestamp,
-            (epoch(tpep_dropoff_datetime)::int - epoch(tpep_pickup_datetime)::int) / 60 as trip_duration_min,
+            round((epoch(tpep_dropoff_datetime)::int - epoch(tpep_pickup_datetime)::int) / 60, 2) as trip_duration_min,
             passenger_count,
             trip_distance,
             RatecodeID,

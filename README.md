@@ -1,156 +1,21 @@
-<img src="https://assets.website-files.com/61a888508b7cccb7485cdac2/61b31d9009792071f950394b_logo_dscovr.svg">
-
-# Data Engineer: DuckDB & DBT - Dynamic Data Modeling Challenge
-
-## Abstract
-
-This challenge tests your ability to work with data modeling, query optimization, and modern data tools like **DuckDB** and **DBT**. These tools are critical for the systems we build at [DSCOVR](https://dscovr.io), and this challenge will give us insight into your approach to building **staging models** and **data marts** from raw data.
-
-Take your time to read the challenge, and when you're ready, provide an estimate of how long it will take. If necessary, feel free to request an extension. This exercise is designed to be stimulating and fun, so push your boundaries and show off your skills!
-
-**Red 🔴 - Green ✅ - Refactor 📝 - and have fun.**
-
----
-## Objective
-
-The challenge is to create a data pipeline using **DBT** and **DuckDB**, starting from raw data, transforming it into staging models, and finally creating **data marts**. 
-
-Your goal is to build a **DBT project**:
-
-1. Use a **public dataset** (details provided below) as the raw data source.
-2. **Staging models**: to clean, normalize, and enrich the raw data.
-3. **Data marts**: to extract key metrics and generate insights for decision-making.
-
----
-
-## Dataset
-
-We will use the **New York City Taxi Trips Dataset**, which contains trip records of taxis in NYC. This dataset is publicly available and can be downloaded using the following:
-
-```shell
-$ wget https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2024-01.parquet
-```
-
-**Key Columns**:
-- `VendorID`: ID of the provider.
-- `tpep_pickup_datetime`, `tpep_dropoff_datetime`: trip start and end timestamps.
-- `passenger_count`: number of passengers.
-- `trip_distance`: distance of the trip in miles.
-- `RatecodeID`: rate code.
-- `fare_amount`: trip fare.
-- `tip_amount`: tip amount.
-- `total_amount`: total paid.
-- And other useful columns for metric calculations.
-
----
-
-## Tasks: Required Models
-
-### 1. **Staging Models** [Mandatory]
-Create staging models to clean and enrich the data by:
-- **Timestamp formatting**: Standardize date/time formats and calculate:
-  - Trip duration in minutes.
-- **Data cleaning**: Remove rows with implausible values (e.g., negative `trip_distance`, `total_amount` ≤ 0).
-- **Additional flags**:
-  - Identify if the trip was prepaid (`payment_type` = 2).
-  - Classify trips based on distance (e.g., short, medium, long).
-
-### 2. **Data Marts**
-Create the following **marts** to provide insights:
-
-#### A. **Trips by Time of Day** [Mandatory]
-- Calculate the total number of trips and total revenue (`total_amount`) for different time slots:
-  - Morning (5:00-12:00)
-  - Afternoon (12:00-17:00)
-  - Evening (17:00-22:00)
-  - Night (22:00-5:00)
-
-#### B. **Top 5 Pickup Zones** [Mandatory]
-- Identify the top 5 pickup zones (`PULocationID`) with:
-  - The highest number of trips.
-  - The highest total revenue.
-
-#### C. **Driver/Rate Performance** [Mandatory]
-- Analyze **tips**:
-  - Calculate the average tip percentage (`tip_amount / total_amount`) for each `VendorID`.
-
-#### D. **Distance Analysis** [Mandatory]
-- Segment trips by distance (`trip_distance`):
-  - **Short**: 0-2 miles.
-  - **Medium**: 2-5 miles.
-  - **Long**: >5 miles.
-- Calculate the average trip duration and total revenue for each segment.
-
----
-
-## Evaluation Criteria
-
-1. **Clean and structured DBT project**:
-   - Clear and well-organized models (raw, staging, marts).
-   - Use of **DBT macros** to avoid repetitive logic.
-2. **Query performance**:
-   - Optimization of SQL queries for DuckDB.
-3. **Documentation**:
-   - A clear **README.md** explaining:
-     - How to run the project.
-     - Choices made in staging and marts models.
-     - How to run any included tests.
-4. **Bonus**:
-   - Implementation of DBT tests (`unique`, `not null`, etc.).
-   - Inclusion of visualizations for results (optional).
-
----
-
-## Example Outputs
-
-Here are examples of expected output tables:
-
-### **A. Trips by Time of Day**
-| Time Slot    | Total Trips | Total Revenue |
-|--------------|-------------|---------------|
-| Morning      | 1,234       | $12,345.67    |
-| Afternoon    | 2,345       | $23,456.78    |
-| Evening      | 3,456       | $34,567.89    |
-| Night        | 1,123       | $11,234.56    |
-
----
-
 ### Repo qick start
 
+Once installed the required virtualenv - as shown in the orginal repo's README.md file - you can run the following steps: 
+
+1. To run the project, type:
 ```shell
-$ uv venv
-$ source .venv/bin/activate
-$ uv sync
-$ wget https://github.com/duckdb/duckdb/releases/download/v1.1.3/duckdb_cli-linux-amd64.zip && unzip duckdb_cli-linux-amd64.zip && mv duckdb .venv/bin/
-$ uv run dbt deps 
-$ wget https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2024-01.parquet -P data/raw
 $ uv run dbt run
-09:35:38  Running with dbt=1.8.8
-09:35:38  Registered adapter: duckdb=1.9.0
-09:35:38  Found 1 model, 532 macros
-09:35:38
-09:35:39  Concurrency: 1 threads (target='dev')
-09:35:39
-09:35:39  1 of 1 START sql table model main.staging_yellow_tripdata ...................... [RUN]
-09:35:39  1 of 1 OK created sql table model main.staging_yellow_tripdata ................. [OK in 0.69s]
-09:35:39
-09:35:39  Finished running 1 table model in 0 hours 0 minutes and 0.93 seconds (0.93s).
-09:35:39
-09:35:39  Completed successfully
-09:35:39
-09:35:39  Done. PASS=1 WARN=0 ERROR=0 SKIP=0 TOTAL=1
-
+```
+This will create 5 tables (1 staging, 4 marts) and 1 view (staging), which can be queried as, for example:
+```shell
 $ uv run duckdb data/db/yellow_tripdata.duckdb "select  * from staging_yellow_tripdata limit 10"
+```
+3. To run tests, type: 
+```shell
+$ uv run dbt test
+```
+This command is going to run all tests defined in the```staging/schema.yaml``` file.
+
 ---
 
-### Submission
 
-1. Fork this repository and start your work on a new branch.
-2. Include a `README.md` file with instructions on how to run the project.
-3. Submit the repository as a `git bundle` or share it via GitHub/GitLab.
-
----
-
-## Contacts
-
-For questions or clarifications: [https://linktr.ee/mauro.malvestio](https://linktr.ee/mauro.malvestio)
